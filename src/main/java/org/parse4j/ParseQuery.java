@@ -752,7 +752,11 @@ public class ParseQuery<T extends ParseObject> {
 	}
 
 	private String retrieveEndpoint () {
-		if(!"users".equals(getClassName()) && !"roles".equals(getClassName())) {
+		
+		if("schemas".equals(getClassName())) {
+			return "schemas";
+		}
+		else if(!"users".equals(getClassName()) && !"roles".equals(getClassName())) {
 			return "classes/" + getClassName();
 		}
 		else {
