@@ -12,13 +12,19 @@ import org.junit.BeforeClass;
 public class Parse4JTestCase {
 	
 	public static String CLASS_NAME = "parse4j";
-	private static String APP_ID = "RWjFpDDbwCIXF8Gy9dHEBpR7Fs2PZ0UzcNdxhAvf";
+	//private static String APP_ID = "RWjFpDDbwCIXF8Gy9dHEBpR7Fs2PZ0UzcNdxhAvf";
 	private static String APP_REST_API_ID = "EWpTGoOFgGr9vXfPLBRYZjhDL0pg4MQ1F7i3wWAq";
+	
+
+	// This is test app beloning to JH
+	private static String APP_ID = "EwnqFquADKzAdwuap7dBjYQCrePXE55d168KaoAT";
+	private static String MASTER_KEY = "2K27gKlP2GvX969UZ3mqqEOFLWo05uVDN7FutNd5";
 
 	@BeforeClass
 	public static void setupParse() {
 		System.out.println("setupParse(): initializing...");
-		Parse.initialize(APP_ID, APP_REST_API_ID);
+		//Parse.initialize(APP_ID, APP_REST_API_ID);
+		Parse.initializeAsRoot(APP_ID,MASTER_KEY);
 	}
 	
 	@AfterClass

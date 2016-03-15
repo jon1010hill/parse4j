@@ -133,7 +133,7 @@ public class ParseObject {
 		}
 		Object value = this.data.get(key);
 		if (!(value instanceof ParseGeoPoint)) {
-			LOGGER.error("Called getParseFile(\"{}\") but the value is a {}", key, value.getClass());
+			LOGGER.error("Called getParseGeoPoint(\"{}\") but the value is a {}", key, value.getClass());
 			return null;
 		}
 		return (ParseGeoPoint) value;
@@ -146,7 +146,7 @@ public class ParseObject {
 		}
 		Object value = this.data.get(key);
 		if (!(value instanceof Date)) {
-			LOGGER.error("Called getParseFile(\"{}\") but the value is a {}", key, value.getClass());
+			LOGGER.error("Called getDate(\"{}\") but the value is a {}", key, value.getClass());
 			return null;
 		}
 		return (Date) value;
@@ -171,7 +171,7 @@ public class ParseObject {
 		}
 		Object value = this.data.get(key);
 		if (!(value instanceof Number)) {
-			LOGGER.error("Called getParseFile(\"{}\") but the value is a {}", key, value.getClass());
+			LOGGER.error("Called getNumber(\"{}\") but the value is a {}", key, value.getClass());
 			return null;
 		}
 		return (Number) value;

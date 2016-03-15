@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 @ParseClassName("schemas")
 public class ParseSchema extends ParseObject {
-
+// TODO need to make sure Schema Queries always get master key - beware race conditions
 	public static class DataType {
 
 		private String typeName;
@@ -91,9 +91,9 @@ public class ParseSchema extends ParseObject {
 					t = new DataType(typeName);
 				}
 				Field f = new Field(fieldName, t);
-				if (!f.getName().equals("ACL")) { // todo come back to this
-					fields.add(f);
-				}
+				
+				fields.add(f);
+				
 			}
 
 		}
