@@ -6,6 +6,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parse4j.Parse;
 import org.parse4j.ParseObject;
 import org.parse4j.ParseRelation;
 import org.parse4j.encode.ParseObjectEncodingStrategy;
@@ -16,8 +17,13 @@ public class RelationOperation<T extends ParseObject> implements ParseFieldOpera
 	private String targetClass;
 	private Set<ParseObject> relationsToAdd;
 	private Set<ParseObject> relationsToRemove;
+	private final Parse parseContext;
 	
-	public RelationOperation(Set<T> newRelationsToAdd, Set<T> newRelationsToRemove) {
+	public RelationOperation(Parse parseContext) {
+		this.parseContext = parseContext;
+	}
+	public RelationOperation(Set<T> newRelationsToAdd, Set<T> newRelationsToRemove,Parse parseContext) {
+		this(parseContext);
 		this.targetClass = null;
 		this.relationsToAdd = new HashSet<ParseObject>();
 		this.relationsToRemove = new HashSet<ParseObject>();
@@ -90,7 +96,7 @@ public class RelationOperation<T extends ParseObject> implements ParseFieldOpera
 		ParseRelation<T>relation = null;
 
 		if (oldValue == null) {
-			relation = new ParseRelation<T>(parseObject, key);
+			relation = new ParseRelation<T>(parseObject, key,this.parseContext);
 			relation.setTargetClass(this.targetClass);
 		} else if ((oldValue instanceof ParseRelation)) {
 			relation = (ParseRelation<T>) oldValue;

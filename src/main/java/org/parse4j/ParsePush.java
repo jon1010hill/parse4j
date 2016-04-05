@@ -20,7 +20,11 @@ public class ParsePush {
 	private Boolean pushToIOS = null;
 	private Boolean pushToAndroid = null;
 	private JSONObject pushData = new JSONObject();
+	private final Parse parseContext;
 
+	public ParsePush(Parse parseContext) {
+		this.parseContext = parseContext;
+	}
 	public void setChannel(String channel) {
 		this.channelSet = new ArrayList<String>();
 		this.channelSet.add(channel);
@@ -74,7 +78,7 @@ public class ParsePush {
         }
 	
 	public void send() throws ParseException {
-		ParsePostCommand command = new ParsePostCommand("push");
+		ParsePostCommand command = new ParsePostCommand("push",this.parseContext);
                 JSONObject requestData = getJSONData();
 		command.setData(requestData);
 		ParseResponse response = command.perform();

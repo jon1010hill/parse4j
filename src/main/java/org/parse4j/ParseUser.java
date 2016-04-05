@@ -19,10 +19,16 @@ public class ParseUser extends ParseObject {
 
 	private String password;
 	private String sessionToken;
+	
 
 	public ParseUser() {
-		super(ParseRegistry.getClassName(ParseUser.class));
+		
+	}
+	
+	public ParseUser(Parse parseContext) {
+		super(ParseRegistry.getClassName(ParseUser.class),parseContext);
 		setEndPoint("users");
+	
 	}
 
 	public void remove(String key) {
@@ -64,8 +70,8 @@ public class ParseUser extends ParseObject {
 
 	}
 
-	public static ParseUser logIn(String username, String password) throws ParseException {
-		ParseUser pu = new ParseUser();
+	public static ParseUser logIn(String username, String password, Parse parseContext) throws ParseException {
+		ParseUser pu = new ParseUser(parseContext);
 		pu.setUsername(username);
 		pu.setPassword(password);
 		return pu;
@@ -113,7 +119,7 @@ public class ParseUser extends ParseObject {
 					"Cannot sign up a user that has already signed up.");
 		}
 		
-		ParsePostCommand command = new ParsePostCommand(getClassName());
+		ParsePostCommand command = new ParsePostCommand(getClassName(),this.parseContext);
 		JSONObject parseData = getParseData();
 		parseData.put("password", password);
 		command.setData(parseData);
@@ -145,10 +151,10 @@ public class ParseUser extends ParseObject {
 		
 	}
 	
-	public static ParseUser login(String username, String password) throws ParseException {
+	public static ParseUser login(String username, String password, Parse parseContext) throws ParseException {
 		
 		currentUser = null;
-		ParseGetCommand command = new ParseGetCommand("login");
+		ParseGetCommand command = new ParseGetCommand("login",parseContext);
 		command.addJson(false);
 		command.put("username", username);
 	    command.put("password", password);
@@ -160,7 +166,7 @@ public class ParseUser extends ParseObject {
 				throw response.getException();
 			}
 			try {
-				ParseUser parseUser = new ParseUser();
+				ParseUser parseUser = new ParseUser(parseContext);
 				parseUser.setObjectId(jsonResponse.getString(ParseConstants.FIELD_OBJECT_ID));
 				parseUser.setSessionToken(jsonResponse.getString(ParseConstants.FIELD_SESSION_TOKEN));
 				currentUser = parseUser;
@@ -190,9 +196,9 @@ public class ParseUser extends ParseObject {
 		
 	}
 	
-	public static void requestPasswordReset(String email) throws ParseException {
+	public static void requestPasswordReset(String email,Parse parseContext) throws ParseException {
 
-		ParsePostCommand command = new ParsePostCommand("requestPasswordReset");
+		ParsePostCommand command = new ParsePostCommand("requestPasswordReset",parseContext);
 		JSONObject data = new JSONObject();
 		data.put("email", email);
 		command.setData(data);
@@ -214,7 +220,7 @@ public class ParseUser extends ParseObject {
 	public void delete() throws ParseException {
 		if(getObjectId() == null) return;
 
-		ParseCommand command = new ParseDeleteCommand(getEndPoint(), getObjectId());
+		ParseCommand command = new ParseDeleteCommand(getEndPoint(), getObjectId(),this.parseContext);
 		command.put(ParseConstants.FIELD_SESSION_TOKEN, getSessionToken());
 
 		ParseResponse response = command.perform();

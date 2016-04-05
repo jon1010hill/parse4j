@@ -16,12 +16,14 @@ public class ParsePutCommand extends ParseCommand {
 	private String endPoint;
 	private String objectId;
 
-	public ParsePutCommand(String endPoint, String objectId) {
+	public ParsePutCommand(String endPoint, String objectId,Parse parseContext) {
+		super(parseContext);
 		this.endPoint = endPoint;
 		this.objectId = objectId;
 	}
 	
-	public ParsePutCommand(String endPoint) {
+	public ParsePutCommand(String endPoint,Parse parseContext) {
+		super(parseContext);
 		this.endPoint = endPoint;
 	}
 
@@ -41,7 +43,7 @@ public class ParsePutCommand extends ParseCommand {
 	}
 	
 	protected String getUrl() {
-		String url = Parse.getParseAPIUrl(endPoint) + (objectId != null ? "/" + objectId : "");
+		String url = this.parseContext.getParseAPIUrl(endPoint) + (objectId != null ? "/" + objectId : "");
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Request URL: {}", url);

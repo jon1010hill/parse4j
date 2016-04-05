@@ -12,13 +12,13 @@ import org.slf4j.LoggerFactory;
 public class ParseCloud {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseCloud.class);
-
+	
 	@SuppressWarnings("unchecked")
-	public static <T> T callFunction(String name, Map<String, ?> params)
+	public static <T> T callFunction(String name, Map<String, ?> params,Parse parseContext)
 			throws ParseException {
-
+		
 		T result = null;
-		ParsePostCommand command = new ParsePostCommand("functions", name);
+		ParsePostCommand command = new ParsePostCommand("functions", name,parseContext);
 		command.setData(new JSONObject(params));
 		ParseResponse response = command.perform();
 		
@@ -35,9 +35,9 @@ public class ParseCloud {
 	}
 
 	public static <T> void callFunctionInBackground(String name,
-			Map<String, ?> params, FunctionCallback<T> callback) {
+			Map<String, ?> params, FunctionCallback<T> callback, Parse parseContext) {
 
-		CallFunctionInBackgroundThread<T> task = new CallFunctionInBackgroundThread<T>(name, params, callback);
+		CallFunctionInBackgroundThread<T> task = new CallFunctionInBackgroundThread<T>(name, params, callback,parseContext);
 		ParseExecutor.runInBackground(task);
 	}
 	
@@ -45,18 +45,20 @@ public class ParseCloud {
 		Map<String, ?> params;
 		FunctionCallback<T> functionCallback;
 		String name;
+		private final Parse parseContext;
 		
-		public CallFunctionInBackgroundThread(String name, Map<String, ?> params, FunctionCallback<T> functionCallback) {
+		public CallFunctionInBackgroundThread(String name, Map<String, ?> params, FunctionCallback<T> functionCallback, final Parse parseContext) {
 			this.functionCallback = functionCallback;
 			this.params = params;
 			this.name = name;
+			this.parseContext = parseContext;
 		}
 
 		public void run() {
 			ParseException exception = null;
 			T result = null;
 			try {
-				result = callFunction(name, params);
+				result = callFunction(name, params,parseContext);
 			} catch (ParseException e) {
 				LOGGER.debug("Request failed {}", e.getMessage());
 				exception = e;

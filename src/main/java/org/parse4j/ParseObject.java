@@ -24,10 +24,10 @@ import org.parse4j.command.ParsePostCommand;
 import org.parse4j.command.ParsePutCommand;
 import org.parse4j.command.ParseResponse;
 import org.parse4j.encode.PointerEncodingStrategy;
-import org.parse4j.operation.DeleteFieldOperation;
-import org.parse4j.operation.IncrementFieldOperation;
 import org.parse4j.operation.AddOperation;
 import org.parse4j.operation.AddUniqueOperation;
+import org.parse4j.operation.DeleteFieldOperation;
+import org.parse4j.operation.IncrementFieldOperation;
 import org.parse4j.operation.ParseFieldOperation;
 import org.parse4j.operation.RelationOperation;
 import org.parse4j.operation.RemoveFieldOperation;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class ParseObject {	
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseObject.class);
-
+	protected Parse parseContext;
 	private String objectId;
 	private String className;
 	private String endPoint;
@@ -53,10 +53,13 @@ public class ParseObject {
 	private Date createdAt;
 
 	protected ParseObject() {
-		this("_Parse4J");
+		this("_Parse4J",null);
+	}
+	protected ParseObject(Parse parseContext) {
+		this("_Parse4J",parseContext);
 	}
 	
-	public ParseObject(String className) {
+	public ParseObject(String className,Parse parseContext) {
 		
 		if (className == null) {
 			LOGGER.error("You must specify a Parse class name when creating a new ParseObject.");
@@ -67,7 +70,7 @@ public class ParseObject {
 		if ("_Parse4J".equals(className)) {
 			className = ParseRegistry.getClassName(getClass());
 	      }		
-		
+		this.parseContext = parseContext;
 		this.className = className;
 		this.data = new Hashtable<String, Object>();
 		this.operations = new Hashtable<String, ParseFieldOperation>();
@@ -75,17 +78,17 @@ public class ParseObject {
 		setEndPoint("classes/" + className);
 	}
 
-	public static ParseObject create(String className) {
-		return new ParseObject(className);
+	public static ParseObject create(String className,Parse parseContext) {
+		return new ParseObject(className,parseContext);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends ParseObject> T create(Class<T> subclass) {
-		return (T) create(ParseRegistry.getClassName(subclass));
+	public static <T extends ParseObject> T create(Class<T> subclass,Parse parseContext) {
+		return (T) create(ParseRegistry.getClassName(subclass),parseContext);
 	}
 	
-	public static ParseObject createWithoutData(String className, String objectId) {
-		ParseObject result = create(className);
+	public static ParseObject createWithoutData(String className, String objectId,Parse parseContext) {
+		ParseObject result = create(className,parseContext);
 	    result.setObjectId(objectId);
 	    result.isDirty = false;
 	    return result;
@@ -93,6 +96,11 @@ public class ParseObject {
 	
 	void validateSave() { }
 
+	public void setContext(Parse parse) {
+		
+		this.parseContext = parse;
+		
+	}
 	public String getObjectId() {
 		return this.objectId;
 	}
@@ -222,7 +230,7 @@ public class ParseObject {
 		Object value = this.data.get(key);
 
 		if ((value instanceof JSONArray)) {
-			value = ParseDecoder.decode(value);
+			value = ParseDecoder.decode(value,parseContext);
 			put(key, value);
 		}
 
@@ -275,7 +283,7 @@ public class ParseObject {
 	}	
 	
 	public <T extends ParseObject> ParseRelation<T> getRelation(String key) {
-		ParseRelation<T> relation = new ParseRelation<T>(this, key);
+		ParseRelation<T> relation = new ParseRelation<T>(this, key,this.parseContext);
 		Object value = this.data.get(key);
 		if(value != null) {
 			if (value instanceof ParseRelation) {
@@ -463,10 +471,10 @@ public class ParseObject {
 
 		ParseCommand command;
 		if(objectId == null) {
-			command = new ParsePostCommand(getEndPoint());
+			command = new ParsePostCommand(getEndPoint(),this.parseContext);
 		}
 		else {
-			command =  new ParsePutCommand(getEndPoint(), getObjectId());
+			command =  new ParsePutCommand(getEndPoint(), getObjectId(),this.parseContext);
 		}
 		
 		command.setData(getParseData());
@@ -511,7 +519,7 @@ public class ParseObject {
 		
 		if(objectId == null) return;
 		
-		ParseCommand command = new ParseDeleteCommand(getEndPoint(), getObjectId());
+		ParseCommand command = new ParseDeleteCommand(getEndPoint(), getObjectId(),this.parseContext);
 		ParseResponse response = command.perform();
 		if(response.isFailed()) {
 			throw response.getException();
@@ -640,7 +648,7 @@ public class ParseObject {
 	
 	public <T extends ParseObject> T fetchIfNeeded() throws ParseException {
 	
-		ParseGetCommand command = new ParseGetCommand(getEndPoint(), getObjectId());
+		ParseGetCommand command = new ParseGetCommand(getEndPoint(), getObjectId(),this.parseContext);
 		//JSONObject query = new JSONObject();
 		//query.put("objectId", getObjectId());
 		//command.setData(query);
@@ -681,7 +689,7 @@ public class ParseObject {
 	private <T extends ParseObject> T parseData(JSONObject jsonObject) {
 		
 		@SuppressWarnings("unchecked")
-		T po = (T) new ParseObject();
+		T po = (T) new ParseObject(this.parseContext);
 		
 		Iterator<?> keys = jsonObject.keys();
 		while( keys.hasNext() ){
@@ -710,7 +718,7 @@ public class ParseObject {
             	
             	if("File".equals(type)) {
 					ParseFile file = new ParseFile(o.getString("name"),
-							o.getString("url"));
+							o.getString("url"),this.parseContext);
             		po.put(key, file);
             	}
             	
@@ -724,7 +732,7 @@ public class ParseObject {
     				setReservedKey(key, obj);
     			}
     			else {
-    				put(key, ParseDecoder.decode(obj));
+    				put(key, ParseDecoder.decode(obj,parseContext));
     			}
             }
             
@@ -747,7 +755,7 @@ public class ParseObject {
 				setReservedKey(key, value);
 			}
 			else {
-				put(key, ParseDecoder.decode(value), disableChecks);
+				put(key, ParseDecoder.decode(value,parseContext), disableChecks);
 			}
 		}
 		

@@ -30,7 +30,7 @@ public class ParseCloudTestCase extends Parse4JTestCase {
 		try {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("name", "Parse");
-			String result = ParseCloud.callFunction("InvalidFunction", params);
+			String result = ParseCloud.callFunction("InvalidFunction", params,PARSE);
 			assertEquals("Hello, Parse!!!", result);
 		}
 		catch(ParseException pe) {
@@ -44,7 +44,7 @@ public class ParseCloudTestCase extends Parse4JTestCase {
 		try {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("name", "Parse");
-			String result = ParseCloud.callFunction("ForcedError", params);
+			String result = ParseCloud.callFunction("ForcedError", params,PARSE);
 			assertEquals("Hello, Parse!!!", result);
 		}
 		catch(ParseException pe) {
@@ -58,7 +58,7 @@ public class ParseCloudTestCase extends Parse4JTestCase {
 		try {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("name", "Parse");
-			String result = ParseCloud.callFunction("helloWorld", params);
+			String result = ParseCloud.callFunction("helloWorld", params,PARSE);
 			assertEquals("Hello, Parse!!!", result);
 		}
 		catch(ParseException pe) {
@@ -73,7 +73,7 @@ public class ParseCloudTestCase extends Parse4JTestCase {
 			HashMap<String, Integer> params = new HashMap<String, Integer>();
 			params.put("A", 12);
 			params.put("B", 4);
-			Integer result = ParseCloud.callFunction("Multiply", params);
+			Integer result = ParseCloud.callFunction("Multiply", params,PARSE);
 			assertEquals("48", result.toString());
 		}
 		catch(ParseException pe) {
@@ -97,7 +97,7 @@ public class ParseCloudTestCase extends Parse4JTestCase {
 				
 			}
 			
-		});	
+		},PARSE);	
 		sleep(2000);
 	}
 	

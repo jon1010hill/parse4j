@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class ParseFile {	
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseFile.class);
-
+	private final Parse parseContext;
 	private String endPoint;
 	private boolean uplodated = false;
 	private boolean dirty = false;
@@ -33,7 +33,7 @@ public class ParseFile {
 	private String contentType = null;
 	byte[] data;
 
-	public ParseFile(String name, byte[] data, String contentType) {
+	public ParseFile(String name, byte[] data, String contentType, Parse parseContext) {
 		if (data.length > ParseConstants.MAX_PARSE_FILE_SIZE) {
 			LOGGER.error(String.format(
 							"ParseFile must be less than %i bytes, current %i",
@@ -53,23 +53,27 @@ public class ParseFile {
 		this.data = data;
 		this.contentType = contentType;
 		this.dirty = true;
+		this.parseContext = parseContext;
 	}
 
-	public ParseFile(byte[] data) {
-		this(null, data, null);
+	public ParseFile(byte[] data, Parse parseContext) {
+		this(null, data, null,parseContext);
+		
 	}
 
-	public ParseFile(String name, byte[] data) {
-		this(name, data, null);
+	public ParseFile(String name, byte[] data, Parse parseContext) {
+		this(name, data, null,parseContext);
 	}
 
-	public ParseFile(byte[] data, String contentType) {
-		this(null, data, contentType);
+	public ParseFile(byte[] data, String contentType, Parse parseContext) {
+		this(null, data, contentType,parseContext);
 	}
 	
-	public ParseFile(String name, String url) {
+	public ParseFile(String name, String url, Parse parseContext) {
 		this.name = name;
 		this.url = url;
+		this.parseContext = parseContext;
+
 	}
 
 	public boolean isDirty() {
@@ -133,7 +137,7 @@ public class ParseFile {
 		
 		if(!isDirty() || data == null) return;
 		
-		ParseUploadCommand command = new ParseUploadCommand(getEndPoint());
+		ParseUploadCommand command = new ParseUploadCommand(getEndPoint(), this.parseContext);
 		command.setProgressCallback(progressCallback);
 		command.setData(data);
 		if(getContentType() == null) {

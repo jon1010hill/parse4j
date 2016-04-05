@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parse4j.Parse;
 import org.parse4j.ParseDecoder;
 import org.parse4j.ParseObject;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class ParseFieldOperations {
 		public abstract ParseFieldOperation decode(JSONObject paramJSONObject) throws JSONException;
 	}
 	
-	public static void registerDefaultDecoders() {
+	public static void registerDefaultDecoders(final Parse parseContext) {
 		/*
 		registerDecoder("Batch", new ParseFieldOperationFactory() {
 			public ParseFieldOperation decode(JSONObject object) throws JSONException {
@@ -78,17 +79,17 @@ public class ParseFieldOperations {
 		registerDecoder("AddRelation", new ParseFieldOperationFactory() {
 			public ParseFieldOperation decode(JSONObject object) throws JSONException {
 				JSONArray objectsArray = object.optJSONArray("objects");
-				List objectsList = (List) ParseDecoder.decode(objectsArray);
+				List objectsList = (List) ParseDecoder.decode(objectsArray,parseContext);
 				return new RelationOperation(new HashSet(objectsList),
-						null);
+						null,parseContext);
 			}
 		});
 		registerDecoder("RemoveRelation", new ParseFieldOperationFactory() {
 			public ParseFieldOperation decode(JSONObject object) throws JSONException {
 				JSONArray objectsArray = object.optJSONArray("objects");
-				List objectsList = (List) ParseDecoder.decode(objectsArray);
+				List objectsList = (List) ParseDecoder.decode(objectsArray,parseContext);
 				return new RelationOperation(null,
-						new HashSet(objectsList));
+						new HashSet(objectsList),parseContext);
 			}
 		});
 	}

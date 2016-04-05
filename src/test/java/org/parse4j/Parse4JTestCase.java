@@ -19,12 +19,15 @@ public class Parse4JTestCase {
 	// This is test app beloning to JH
 	private static String APP_ID = "EwnqFquADKzAdwuap7dBjYQCrePXE55d168KaoAT";
 	private static String MASTER_KEY = "2K27gKlP2GvX969UZ3mqqEOFLWo05uVDN7FutNd5";
+	
+	public static Parse PARSE;
 
 	@BeforeClass
 	public static void setupParse() {
 		System.out.println("setupParse(): initializing...");
 		//Parse.initialize(APP_ID, APP_REST_API_ID);
-		Parse.initializeAsRoot(APP_ID,MASTER_KEY);
+		PARSE = new Parse();
+		PARSE.initializeAsRoot(APP_ID,MASTER_KEY);
 	}
 	
 	@AfterClass
@@ -35,12 +38,12 @@ public class Parse4JTestCase {
 	}
 	
 	protected ParseObject getEmptyParseObject(String className) {
-		ParseObject parseObject = new ParseObject(className);
+		ParseObject parseObject = new ParseObject(className,PARSE);
 		return parseObject;
 	}
 	
 	protected ParseObject getParseObject(String className) {
-		ParseObject parseObject = new ParseObject(className);
+		ParseObject parseObject = new ParseObject(className,PARSE);
 		parseObject.put("name", "parse developer");
 		parseObject.put("int", 10);
 		parseObject.put("long", 10l);
@@ -61,7 +64,7 @@ public class Parse4JTestCase {
 	}
 	
 	protected ParseUser getParseUser(String number) {
-		ParseUser parseUser = new ParseUser();
+		ParseUser parseUser = new ParseUser(PARSE);
 		parseUser.setUsername("parse4j-user" + number);
 		parseUser.setPassword("parse4j-password");
 		parseUser.setEmail("parse4j-email"+number+"@gmail.com");

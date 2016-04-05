@@ -13,7 +13,7 @@ public class ParseSchemaTestCase extends Parse4JTestCase {
 	public void testSchemaQueryToSchmeaObject() {
 
 		ParseRegistry.registerSubclass(ParseSchema.class);
-		ParseQuery<ParseSchema> query = ParseQuery.getQuery(ParseSchema.class);
+		ParseQuery<ParseSchema> query = ParseQuery.getQuery(ParseSchema.class,PARSE);
 		List<ParseSchema> list;
 		try {
 			list = query.find();

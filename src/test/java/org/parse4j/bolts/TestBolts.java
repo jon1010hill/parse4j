@@ -20,7 +20,7 @@ public class TestBolts extends Parse4JTestCase {
 			
 			@Override
 			public List<ParseObject> call() throws Exception {
-				ParseQuery<ParseObject> query = ParseQuery.getQuery("games");
+				ParseQuery<ParseObject> query = ParseQuery.getQuery("games",PARSE);
 				query.whereGreaterThan("losingScore", 140);
 				query.skip(4);
 				System.out.println("before running");
@@ -37,7 +37,7 @@ public class TestBolts extends Parse4JTestCase {
 	
 	@Test
 	public void testForResult() throws Exception {
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("games");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("games",PARSE);
 		query.whereGreaterThan("losingScore", 140);
 		query.skip(4);
 		Task<List<ParseObject>> task = Task.forResult(query.find());
@@ -56,7 +56,7 @@ public class TestBolts extends Parse4JTestCase {
 			
 			@Override
 			public List<ParseObject> call() throws Exception {
-				ParseQuery<ParseObject> query = ParseQuery.getQuery("games");
+				ParseQuery<ParseObject> query = ParseQuery.getQuery("games",PARSE);
 				query.whereGreaterThan("losingScore", 140);
 				query.skip(4);
 				return query.find();

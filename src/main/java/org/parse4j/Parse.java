@@ -12,24 +12,33 @@ import java.util.*;
 
 public class Parse {
 
-	private static String mApplicationId;
-	private static String mRestAPIKey;
-	private static String mMasterKey;
+	private String apiEndPoint = ParseConstants.API_ENDPOINT;
+	private String sessionId;
+	private String mApplicationId;
+	private String mRestAPIKey;
+	private String mMasterKey;
 	private static final DateFormat dateFormat;
-	private static boolean isRootMode;
+	private boolean isRootMode;
 
 	static {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		format.setTimeZone(new SimpleTimeZone(0, "GMT"));
 		dateFormat = format;
-		ParseRegistry.registerDefaultSubClasses();
-		ParseFieldOperations.registerDefaultDecoders();
+		
 	}
 
-	static public void initialize(String applicationId, String restAPIKey) {
-		mApplicationId = applicationId;
-		mRestAPIKey = restAPIKey;
-		isRootMode = false;
+	public void initialize(String applicationId, String restAPIKey,String apiEndPoint) {
+	
+		this.initialize(applicationId, restAPIKey);
+		this.apiEndPoint = apiEndPoint;
+	}
+	
+	public void initialize(String applicationId, String restAPIKey) {
+		this.mApplicationId = applicationId;
+		this.mRestAPIKey = restAPIKey;
+		this.isRootMode = false;
+		ParseRegistry.registerDefaultSubClasses();
+		ParseFieldOperations.registerDefaultDecoders(this);
 	}
 
 	/**
@@ -39,27 +48,36 @@ public class Parse {
 	 * @param applicationId your app id
 	 * @param masterKey your master key
 	 */
-	static public void initializeAsRoot (String applicationId, String masterKey) {
+	public void initializeAsRoot (String applicationId, String masterKey) {
 		mApplicationId = applicationId;
 		mMasterKey = masterKey;
 		isRootMode = true;
+		ParseRegistry.registerDefaultSubClasses();
+		ParseFieldOperations.registerDefaultDecoders(this);
+	}
+	
+	public void initializeAsRoot (String applicationId, String masterKey,String apiEndPoint) {
+		this.apiEndPoint = apiEndPoint;
+		this.initializeAsRoot(applicationId, masterKey);
+	}
+	public synchronized void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
-	static public String getApplicationId() {
+	public String getApplicationId() {
 		return mApplicationId;
 	}
 
-	static public String getRestAPIKey() {
+	public String getRestAPIKey() {
 		return mRestAPIKey;
 	}
 
-	public static boolean isIsRootMode() {
+	public boolean isIsRootMode() {
 		return isRootMode;
 	}
 
-	static public String getParseAPIUrl(String context) {
-		return ParseConstants.API_ENDPOINT + "/" + ParseConstants.API_VERSION
-				+ "/" + context;
+	public String getParseAPIUrl(String context) {
+		return this.apiEndPoint + "/" + context;
 	}
 
 	public static synchronized String encodeDate(Date date) {
@@ -74,7 +92,7 @@ public class Parse {
 		}
 	}
 
-	public static String getMasterKey() {
+	public String getMasterKey() {
 		return mMasterKey;
 	}
 
@@ -113,6 +131,11 @@ public class Parse {
 			}
 		}
 		return buffer.toString();
+	}
+
+	public String getSessionId() {
+		
+		return this.sessionId;
 	}
 
 

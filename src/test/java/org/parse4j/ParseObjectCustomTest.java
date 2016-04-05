@@ -25,7 +25,7 @@ public class ParseObjectCustomTest extends Parse4JTestCase {
 	public void save() {
 		System.out.println("save(): initializing...");
 		ParseRegistry.registerSubclass(Person.class);
-		Person parseObject = new Person();
+		Person parseObject = new Person(PARSE);
 		parseObject.setAge(15);
 		parseObject.setGender("male");
 		parseObject.getString("age");
@@ -48,14 +48,14 @@ public class ParseObjectCustomTest extends Parse4JTestCase {
 	public void get() {
 		System.out.println("get(): initializing...");
 		ParseRegistry.registerSubclass(Person.class);
-		Person parseObject = new Person();
+		Person parseObject = new Person(PARSE);
 		parseObject.setAge(31);
 		parseObject.setGender("female");
 		
 		try {
 			parseObject.save();
 			
-			ParseQuery<Person> query = ParseQuery.getQuery(Person.class);
+			ParseQuery<Person> query = ParseQuery.getQuery(Person.class,PARSE);
 			Person person = query.get(parseObject.getObjectId());
 			System.out.println("get(): objectId - " + person.getObjectId() + "-" + parseObject.getObjectId());
 			System.out.println("get(): gender - " + person.getGender() + "-" + parseObject.getGender());
@@ -73,7 +73,7 @@ public class ParseObjectCustomTest extends Parse4JTestCase {
 	public void saveWithChar() {
 		System.out.println("save(): initializing...");
 		ParseRegistry.registerSubclass(Person.class);
-		Person parseObject = new Person();
+		Person parseObject = new Person(PARSE);
 		parseObject.setAge(15);
 		parseObject.setGender("Suíça");
 		parseObject.getString("age");

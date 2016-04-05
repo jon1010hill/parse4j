@@ -14,7 +14,7 @@ public class ParseUserTestCase extends Parse4JTestCase {
     public void signupNoUsername() {
         System.out.println("signupNoUsername(): initializing...");
 
-        ParseUser parseUser = new ParseUser();
+        ParseUser parseUser = new ParseUser(PARSE);
         try {
             parseUser.signUp();
         } catch (ParseException e) {
@@ -27,7 +27,7 @@ public class ParseUserTestCase extends Parse4JTestCase {
     public void signupNoPassword() {
         System.out.println("signupNoPassword(): initializing...");
 
-        ParseUser parseUser = new ParseUser();
+        ParseUser parseUser = new ParseUser(PARSE);
         try {
             parseUser.setUsername("parse4j-user");
             parseUser.signUp();
@@ -41,7 +41,7 @@ public class ParseUserTestCase extends Parse4JTestCase {
     public void signupWithObjectId() {
         System.out.println("signupWithObjectId(): initializing...");
 
-        ParseUser parseUser = new ParseUser();
+        ParseUser parseUser = new ParseUser(PARSE);
         try {
             parseUser.setUsername("parse4j-user");
             parseUser.setPassword("parse4j-password");
@@ -86,7 +86,7 @@ public class ParseUserTestCase extends Parse4JTestCase {
         ParseUser pu = getParseUser(number);
         pu.signUp();
 
-        ParseUser parseUser = ParseUser.login(pu.getUsername(), "parse4j-password");
+        ParseUser parseUser = ParseUser.login(pu.getUsername(), "parse4j-password",PARSE);
 
         assertThat(parseUser.getString("city"), is("westbury"));
         assertThat(parseUser.getString("state"), is("ny"));
@@ -104,7 +104,7 @@ public class ParseUserTestCase extends Parse4JTestCase {
         ParseUser parseUser = getParseUser(number);
         parseUser.signUp();
 
-        ParseUser.requestPasswordReset(parseUser.getEmail());
+        ParseUser.requestPasswordReset(parseUser.getEmail(),PARSE);
 
         parseUser.delete();
     }
@@ -114,7 +114,7 @@ public class ParseUserTestCase extends Parse4JTestCase {
         System.out.println("verifyEmail(): initializing...");
 
         try {
-            ParseUser.requestPasswordReset("invalid@gamil.com");
+            ParseUser.requestPasswordReset("invalid@gamil.com",PARSE);
         } catch (ParseException e) {
             throw e;
         }

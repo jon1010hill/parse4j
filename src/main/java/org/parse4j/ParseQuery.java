@@ -18,6 +18,7 @@ import org.parse4j.util.ParseRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,7 @@ public class ParseQuery<T extends ParseObject> {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseQuery.class);
 
+	private final Parse parseContext;
 	private String className;
 	private QueryConstraints where;
 	private ArrayList<String> include;
@@ -38,11 +40,12 @@ public class ParseQuery<T extends ParseObject> {
 	private boolean caseSensitive = true;
 	private String strTrace;
 
-	public ParseQuery(Class<T> subclass) {
-		this(ParseRegistry.getClassName(subclass));
+	public ParseQuery(Class<T> subclass,Parse parseContext) {
+		this(ParseRegistry.getClassName(subclass),parseContext);
 	}
 
-	public ParseQuery(String theClassName) {
+	public ParseQuery(String theClassName, Parse parseContext) {
+		this.parseContext = parseContext;
 		this.className = theClassName;
 		this.limit = -1;
 		this.skip = 0;
@@ -53,13 +56,13 @@ public class ParseQuery<T extends ParseObject> {
 	}
 	
 	public static <T extends ParseObject> ParseQuery<T> getQuery(
-			Class<T> subclass) {
-		return new ParseQuery<T>(subclass);
+			Class<T> subclass,Parse parseContext) {
+		return new ParseQuery<T>(subclass,parseContext);
 	}
 
 	public static <T extends ParseObject> ParseQuery<T> getQuery(
-			String className) {
-		return new ParseQuery<T>(className);
+			String className, Parse parseContext) {
+		return new ParseQuery<T>(className, parseContext);
 	}
 	
 	private void addCondition(String key, String condition, Object value) {
@@ -503,7 +506,7 @@ public class ParseQuery<T extends ParseObject> {
 	public T createObject (JSONObject json) throws ParseException {
 		final String endPoint = retrieveEndpoint();
 
-		final ParsePostCommand command = new ParsePostCommand(endPoint);
+		final ParsePostCommand command = new ParsePostCommand(endPoint,parseContext);
 		command.setData(json);
 		final ParseResponse response = command.perform();
 
@@ -526,7 +529,7 @@ public class ParseQuery<T extends ParseObject> {
 
 	public void update (String objectId, JSONObject data) throws ParseException {
 		final String endPoint = retrieveEndpoint();
-		final ParsePutCommand command = new ParsePutCommand(endPoint + "/" + objectId);
+		final ParsePutCommand command = new ParsePutCommand(endPoint + "/" + objectId,parseContext);
 		command.setData(data);
 		final ParseResponse response = command.perform();
 
@@ -540,7 +543,7 @@ public class ParseQuery<T extends ParseObject> {
 	@SuppressWarnings("unchecked")
 	public List<T> find(JSONObject query) throws ParseException {
 		final String endPoint = retrieveEndpoint();
-		ParseGetCommand command = new ParseGetCommand(endPoint);
+		ParseGetCommand command = new ParseGetCommand(endPoint,parseContext);
 		query.remove("className");
 		command.setData(query);
 		ParseResponse response = command.perform();
@@ -627,7 +630,7 @@ public class ParseQuery<T extends ParseObject> {
 
 	public int count() throws ParseException {
 		final String endPoint = retrieveEndpoint();
-		ParseGetCommand command = new ParseGetCommand(endPoint);
+		ParseGetCommand command = new ParseGetCommand(endPoint,this.parseContext);
 		JSONObject query = toREST();
 		query.put("count", 1);
 		query.put("limit", 0);
@@ -734,17 +737,20 @@ public class ParseQuery<T extends ParseObject> {
 	private T createPojo (JSONObject obj) throws IllegalAccessException, InstantiationException {
 		Class<?> clazz = ParseRegistry.getParseClass(getClassName());
 		if(clazz != null) {
+		
 			T po = (T) clazz.newInstance();
 			/*
 			We disable some checks while setting data in objects during fetch because
 			those checks are useful only when setting data from client
 			code. The "true" argument disables such checks.
 			*/
+			po.setContext(this.parseContext);
 			po.setData(obj, true);
+			
 			return po;
 		}
 		else {
-			ParseObject po = new ParseObject(getClassName());
+			ParseObject po = new ParseObject(getClassName(),parseContext);
 			// see above for the "true" argument
 			po.setData(obj, true);
 			return (T) po;

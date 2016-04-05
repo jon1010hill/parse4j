@@ -18,7 +18,7 @@ public class ParseBatchTestCase extends Parse4JTestCase {
 
 	@Test
 	public void testReadData() throws ParseException{
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post",PARSE);
 		query.limit(20);
 		List<ParseObject> find = query.find();
 		
@@ -30,9 +30,9 @@ public class ParseBatchTestCase extends Parse4JTestCase {
 	}
 	@Test
 	public void testBatchInsert() throws ParseException{
-		ParseBatch batcher = new ParseBatch();
+		ParseBatch batcher = new ParseBatch(PARSE);
 		for (int i = 0; i < 20; i++) {
-			ParseObject obj = new ParseObject("Post");
+			ParseObject obj = new ParseObject("Post",PARSE);
 			obj.put("title", "input message " + i);
 			batcher.createObject(obj);
 			
@@ -44,13 +44,13 @@ public class ParseBatchTestCase extends Parse4JTestCase {
 	}
 	@Test
 	public void testBatchUpdate() throws ParseException{
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post",PARSE);
 		query.limit(20);
 		query.addDescendingOrder("updateAt");
 		List<ParseObject> find = query.find();
 		LOGGER.info("size is " + find.size());
 		
-		ParseBatch batcher = new ParseBatch();
+		ParseBatch batcher = new ParseBatch(PARSE);
 		for (int i = 0; i < find.size(); i++) {
 			ParseObject current = find.get(i);
 			current.put("title", "input updated message " + i);
@@ -73,16 +73,16 @@ public class ParseBatchTestCase extends Parse4JTestCase {
 		final int size = 5;
 		//first insert 5 objects that should be deleted !
 		for(int i = 0;i<size;i++){
-			ParseObject obj = new ParseObject("Post");
+			ParseObject obj = new ParseObject("Post",PARSE);
 			obj.put("title", "input message " + i);
 			obj.save();
 		}
 
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post",PARSE);
 		query.limit(size);
 		query.addDescendingOrder("updatedAt");
 		List<ParseObject> find = query.find();
-		ParseBatch batcher = new ParseBatch();
+		ParseBatch batcher = new ParseBatch(PARSE);
 		for (int i = 0; i < find.size(); i++) {
 			ParseObject current = find.get(i);
 			LOGGER.info("object found " + current.get("title"));
@@ -96,15 +96,15 @@ public class ParseBatchTestCase extends Parse4JTestCase {
 	
 	@Test(expected = IllegalArgumentException.class) 
 	public void testFailureOnDelete() throws ParseException{
-		ParseBatch batch = new ParseBatch();
-		ParseObject obj = new ParseObject();
+		ParseBatch batch = new ParseBatch(PARSE);
+		ParseObject obj = new ParseObject(PARSE);
 		batch.deleteObject(obj);
 		batch.batch();
 	}
 	@Test(expected = IllegalArgumentException.class) 
 	public void testFailureOnUpdate() throws ParseException{
-		ParseBatch batch = new ParseBatch();
-		ParseObject obj = new ParseObject();
+		ParseBatch batch = new ParseBatch(PARSE);
+		ParseObject obj = new ParseObject(PARSE);
 		batch.updateObject(obj);
 		batch.batch();
 	}

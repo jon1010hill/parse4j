@@ -124,7 +124,7 @@ public class ParseObjectOperationsTestCase extends Parse4JTestCase {
 		System.out.println("testFileNotSave(): initializing...");
 		try {
 			byte[] data = getBytes("/parse.png");
-			ParseFile file = new ParseFile("parse.png", data);
+			ParseFile file = new ParseFile("parse.png", data,PARSE);
 			ParseObject po = getParseObject(CLASS_NAME);
 			po.put("logo", file);
 		}

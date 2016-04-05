@@ -16,9 +16,11 @@ public class ParseRelation<T extends ParseObject> {
 	private String key;
 	private String targetClass;
 	private Set<T> knownObjects = new HashSet<T>();	
+	private final Parse parseContext;
 	
 	@SuppressWarnings("unchecked")
-	public ParseRelation(JSONObject jsonObject) {
+	public ParseRelation(JSONObject jsonObject, Parse parseContext) {
+		this.parseContext = parseContext;
 		this.parent = null;
 		this.key = null;
 		this.targetClass = jsonObject.optString("className", null);
@@ -26,18 +28,20 @@ public class ParseRelation<T extends ParseObject> {
 		if (objectsArray != null) {
 			for (int i = 0; i < objectsArray.length(); i++) {
 				this.knownObjects.add((T) ParseDecoder.decode(objectsArray
-						.optJSONObject(i)));
+						.optJSONObject(i),parseContext));
 			}
 		}
 	}
 
-	public ParseRelation(String targetClass) {
+	public ParseRelation(String targetClass,Parse parseContext) {
 		this.parent = null;
 		this.key = null;
 		this.targetClass = targetClass;
+		this.parseContext = parseContext;
 	}
 
-	public ParseRelation(ParseObject parent, String key) {
+	public ParseRelation(ParseObject parent, String key, Parse parseContext) {
+		this.parseContext = parseContext;
 		this.parent = parent;
 		this.key = key;
 		this.targetClass = null;
@@ -83,7 +87,7 @@ public class ParseRelation<T extends ParseObject> {
 		*/
 		
 		RelationOperation<T> operation = new RelationOperation<T>(
-				Collections.unmodifiableSet(this.knownObjects), null);
+				Collections.unmodifiableSet(this.knownObjects), null,this.parseContext);
 
 		this.targetClass = operation.getTargetClass();
 		this.parent.performOperation(this.key, operation);
@@ -95,7 +99,7 @@ public class ParseRelation<T extends ParseObject> {
 		this.knownObjects.remove(object);
 		
 		RelationOperation<T> operation = new RelationOperation<T>(null,
-				Collections.singleton(object));
+				Collections.singleton(object),this.parseContext);
 
 		this.targetClass = operation.getTargetClass();
 		this.parent.performOperation(this.key, operation);
@@ -106,10 +110,10 @@ public class ParseRelation<T extends ParseObject> {
 
 		ParseQuery<T> query;
 		if (this.targetClass == null) {
-			query = ParseQuery.getQuery(this.parent.getClassName());
+			query = ParseQuery.getQuery(this.parent.getClassName(),this.parseContext);
 			query.redirectClassNameForKey(this.key);
 		} else {
-			query = ParseQuery.getQuery(this.targetClass);
+			query = ParseQuery.getQuery(this.targetClass,this.parseContext);
 		}
 		query.whereRelatedTo(this.parent, this.key);
 		return query;

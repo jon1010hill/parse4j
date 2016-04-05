@@ -22,13 +22,14 @@ public class ParseUploadCommand extends ParseCommand {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseUser.class);
 	
-	public ParseUploadCommand(String endPoint) {
+	public ParseUploadCommand(String endPoint,Parse parseContext) {
+		super(parseContext);
 		this.endPoint = endPoint;
 	}
 
 	@Override
 	public HttpRequestBase getRequest() throws IOException {
-		String url = Parse.getParseAPIUrl(endPoint);
+		String url = this.parseContext.getParseAPIUrl(endPoint);
 		LOGGER.info(url);
 		HttpPost httppost = new HttpPost(url);
 		setupHeaders(httppost, false);

@@ -16,9 +16,12 @@ import org.slf4j.LoggerFactory;
 public class ParseBatch {
 	private static final String path = "/" + ParseConstants.API_VERSION + "/"+ "classes" + "/";
 	private JSONArray data = new JSONArray();
-
+	private final Parse parseContext;
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseBatch.class);
 
+	public ParseBatch(final Parse parseContext) {
+		this.parseContext = parseContext;
+	}
 	public void deleteObject(ParseObject obj) {
 		if (obj.getObjectId() == null)
 			throw new IllegalArgumentException("for delete operation your object should provide objectId");
@@ -54,7 +57,7 @@ public class ParseBatch {
 	 * @throws ParseException
 	 */
 	public JSONArray batch() throws ParseException {
-		ParseCommand command = new ParseBatchCommand();
+		ParseCommand command = new ParseBatchCommand(this.parseContext);
 		command.put("requests", data);
 		ParseResponse response = command.perform();
 		if (!response.isFailed()) {

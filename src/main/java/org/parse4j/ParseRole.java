@@ -9,10 +9,14 @@ public class ParseRole extends ParseObject {
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseRole.class);
 
 	public ParseRole() {
+		
+	}
+	public ParseRole(Parse parseContext) {
+		super(parseContext);
 	}
 
-	public ParseRole(String name) {
-		this();
+	public ParseRole(String name, Parse parseContext) {
+		this(parseContext);
 		setName(name);
 	}
 

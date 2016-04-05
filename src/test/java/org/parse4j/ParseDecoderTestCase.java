@@ -10,13 +10,13 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.parse4j.operation.ParseFieldOperation;
 
-public class ParseDecoderTestCase {
+public class ParseDecoderTestCase extends Parse4JTestCase {
 
 	@Test
 	public void decode() throws ParseException {
 		JSONObject jsonObject = new JSONObject(
 				"{\"createdAt\":\"2015-12-28T06:18:45.493Z\",\"__type\":\"Object\",\"name\":\"test object\",\"nested_object\":{  \"createdAt\":\"2015-12-28T04:24:57.680Z\",\"__type\":\"Object\",\"name\":\"nested object\",\"className\":\"NestedTestClass\",\"objectId\":\"DdDjWiUT8y\",\"updatedAt\":\"2015-12-28T04:42:38.980Z\"},\"className\":\"TestClass\",\"objectId\":\"Ts7L6Bhv00\",\"updatedAt\":\"2015-12-30T11:31:51.512Z\"}");
-		ParseObject decodedObject = (ParseObject) ParseDecoder.decode(jsonObject);
+		ParseObject decodedObject = (ParseObject) ParseDecoder.decode(jsonObject,PARSE);
 		assertFalse(decodedObject.isDirty);
 		assertNotNull(decodedObject.getCreatedAt());
 		assertNotNull(decodedObject.getUpdatedAt());

@@ -16,14 +16,14 @@ public class ParseACLOperationsTestCase extends Parse4JTestCase {
 
 		System.out.println("get(): initializing...");
 		ParseRegistry.registerSubclass(Person.class);
-		Person parseObject = new Person();
+		Person parseObject = new Person(PARSE);
 		parseObject.setAge(31);
 		parseObject.setGender("female");
 		
 		try {
 			parseObject.save();
 			
-			ParseQuery<Person> query = ParseQuery.getQuery(Person.class);
+			ParseQuery<Person> query = ParseQuery.getQuery(Person.class,PARSE);
 			Person person = query.get(parseObject.getObjectId());
 			System.out.println(person);
 		}

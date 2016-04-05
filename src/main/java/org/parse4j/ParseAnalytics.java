@@ -14,15 +14,15 @@ public class ParseAnalytics {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ParseAnalytics.class);
 
-	public static void trackAppOpened() {
-		trackEvent("AppOpened");
+	public static void trackAppOpened(Parse parseContext) {
+		trackEvent("AppOpened",parseContext);
 	}
 
-	public static void trackEvent(String name) {
-		trackEvent(name, null);
+	public static void trackEvent(String name, Parse parseContext) {
+		trackEvent(name, null,parseContext);
 	}
 
-	public static void trackEvent(String name, Map<String, String> dimensions) {
+	public static void trackEvent(String name, Map<String, String> dimensions, Parse parseContext) {
 
 		if ((name == null) || (name.trim().length() == 0)) {
 			LOGGER.error("A name for the custom event must be provided.");
@@ -34,15 +34,17 @@ public class ParseAnalytics {
 
 			private String event;
 			private Map<String, String> dimensions;
-
+			private final Parse parseContext;
+			
 			public TrackEventInBackgroundThread(String event,
-					Map<String, String> dimensions) {
+					Map<String, String> dimensions,Parse parseContext) {
 				this.event = event;
 				this.dimensions = dimensions;
+				this.parseContext = parseContext;
 			}
 
 			public void run() {
-				ParsePostCommand command = new ParsePostCommand("events", event);
+				ParsePostCommand command = new ParsePostCommand("events", event, parseContext);
 				JSONObject data = new JSONObject();
 				data.put("at", ParseEncoder.encode(new Date(), null));
 				if(dimensions != null && dimensions.size() > 0) {
@@ -64,7 +66,7 @@ public class ParseAnalytics {
 		}
 
 		TrackEventInBackgroundThread event = new TrackEventInBackgroundThread(
-				name, dimensions);
+				name, dimensions,parseContext);
 		ParseExecutor.runInBackground(event);
 
 	}

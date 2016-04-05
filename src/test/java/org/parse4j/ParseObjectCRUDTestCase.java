@@ -43,17 +43,17 @@ public class ParseObjectCRUDTestCase extends Parse4JTestCase {
 		try {
 			
 			data = getBytes("/parse.png");
-			file = new ParseFile("parse.png", data);
+			file = new ParseFile("parse.png", data,PARSE);
 			file.save();
 			parseObject.put("pngFile", file);
 
 			data = getBytes("/parse.pdf");
-			file = new ParseFile("parse.pdf", data);
+			file = new ParseFile("parse.pdf", data,PARSE);
 			file.save();
 			parseObject.put("pdfFile", file);
 			
 			data = getBytes("/parse.docx");
-			file = new ParseFile("parse.docx", data);
+			file = new ParseFile("parse.docx", data,PARSE);
 			file.save();
 			parseObject.put("docxFile", file);
 			

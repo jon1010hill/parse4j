@@ -8,7 +8,19 @@ import java.util.Map.Entry;
 
 @ParseClassName("schemas")
 public class ParseSchema extends ParseObject {
-// TODO need to make sure Schema Queries always get master key - beware race conditions
+	
+	public ParseSchema() {
+		
+	}
+	
+	protected ParseSchema(Parse parseContext) {
+		
+		super(parseContext);
+		
+	}
+
+
+	// TODO need to make sure Schema Queries always get master key - beware race conditions
 	public static class DataType {
 
 		private String typeName;

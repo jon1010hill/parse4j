@@ -26,12 +26,18 @@ public abstract class ParseCommand {
 	private static RequestConfig config;
 	protected JSONObject data = new JSONObject();
 	protected boolean addJson = true;
+	
+	protected final Parse parseContext;
 
 	static {
 		config = RequestConfig.custom().build();
 	}
 
 	abstract HttpRequestBase getRequest() throws IOException;
+	
+	protected ParseCommand(Parse parseContext) {
+		this.parseContext = parseContext;
+	}
 
 	public ParseResponse perform() throws ParseException {
 
@@ -69,12 +75,12 @@ public abstract class ParseCommand {
 	}
 
 	protected void setupHeaders(HttpRequestBase requestBase, boolean addJson) {
-		requestBase.addHeader(HEADER_APPLICATION_ID, Parse.getApplicationId());
+		requestBase.addHeader(HEADER_APPLICATION_ID, this.parseContext.getApplicationId());
 
-		if (Parse.isIsRootMode()) {
-			requestBase.addHeader(HEADER_MASTER_KEY, Parse.getMasterKey());
+		if (this.parseContext.isIsRootMode()) {
+			requestBase.addHeader(HEADER_MASTER_KEY, this.parseContext.getMasterKey());
 		} else {
-			requestBase.addHeader(HEADER_REST_API_KEY, Parse.getRestAPIKey());
+			requestBase.addHeader(HEADER_REST_API_KEY, this.parseContext.getRestAPIKey());
 		}
 
 		if (addJson) {

@@ -18,13 +18,15 @@ public class ParseGetCommand extends ParseCommand {
 
 	private String endPoint;
 	private String objectId;
-
-	public ParseGetCommand(String className, String objectId) {
+	
+	public ParseGetCommand(String className, String objectId,Parse parseContext) {
+		super(parseContext);
 		this.endPoint = className;
 		this.objectId = objectId;
 	}
 
-	public ParseGetCommand(String endPoint) {
+	public ParseGetCommand(String endPoint,Parse parseContext) {
+		super(parseContext);
 		this.endPoint = endPoint;
 	}
 
@@ -86,7 +88,7 @@ public class ParseGetCommand extends ParseCommand {
 	}
 	
 	protected String getUrl() {
-		String url = Parse.getParseAPIUrl(endPoint) + (objectId != null ? "/" + objectId : "");
+		String url = this.parseContext.getParseAPIUrl(endPoint) + (objectId != null ? "/" + objectId : "");
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Request URL: {}", url);

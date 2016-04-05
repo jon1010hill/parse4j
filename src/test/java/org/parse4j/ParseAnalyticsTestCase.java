@@ -11,14 +11,14 @@ public class ParseAnalyticsTestCase extends Parse4JTestCase {
 	@Test
 	public void trackAppOpened() {
 		System.out.println("trackAppOpened(): initializing...");
-		ParseAnalytics.trackAppOpened();
+		ParseAnalytics.trackAppOpened(PARSE);
 		sleep(1000);
 	}
 
 	@Test
 	public void trackJunitTest() {
 		System.out.println("trackJunitTest(): initializing...");
-		ParseAnalytics.trackEvent("JUnitTestStarted");
+		ParseAnalytics.trackEvent("JUnitTestStarted",PARSE);
 		sleep(1000);
 	}	
 	
@@ -28,7 +28,7 @@ public class ParseAnalyticsTestCase extends Parse4JTestCase {
 		Map<String, String> dimensions = new HashMap<String, String>();
 		dimensions.put("attr1", "10");
 		dimensions.put("attr2", "127.0.0.1");
-		ParseAnalytics.trackEvent("JUnitTestStarted");
+		ParseAnalytics.trackEvent("JUnitTestStarted",PARSE);
 		sleep(1000);
 	}	
 

@@ -15,7 +15,7 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		System.out.println("uploadTxt(): initializing...");
 		try {
 			byte[] data = "Working at Parse is great!".getBytes();
-			ParseFile file = new ParseFile("resume.txt", data);
+			ParseFile file = new ParseFile("resume.txt", data,PARSE);
 			file.save();
 			testParseFile(file);
 		}
@@ -31,7 +31,7 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		
 		try {
 			byte[] data = getBytes("/parse.png");
-			ParseFile file = new ParseFile("parse.png", data);
+			ParseFile file = new ParseFile("parse.png", data,PARSE);
 			file.save();
 			testParseFile(file);
 		}
@@ -45,7 +45,7 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		System.out.println("uploadDoc(): initializing...");
 		try {
 			byte[] data = getBytes("/parse.docx");
-			ParseFile file = new ParseFile("parse.docx", data);
+			ParseFile file = new ParseFile("parse.docx", data,PARSE);
 			file.save();
 			testParseFile(file);
 		}
@@ -59,7 +59,7 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		System.out.println("uploadExr(): initializing...");
 		try {
 			byte[] data = getBytes("/parse.exr");
-			ParseFile file = new ParseFile("parse.exr", data);
+			ParseFile file = new ParseFile("parse.exr", data,PARSE);
 			file.save();
 			testParseFile(file);
 		}
@@ -73,7 +73,7 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		System.out.println("uploadPdf(): initializing...");
 		try {
 			byte[] data = getBytes("/parse.pdf");
-			ParseFile file = new ParseFile("parse.pdf", data);
+			ParseFile file = new ParseFile("parse.pdf", data,PARSE);
 			file.save();
 			testParseFile(file);
 		}
@@ -86,7 +86,7 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		System.out.println("uploadPdf(): initializing...");
 		try {
 			byte[] data = getBytes("/ml-1m.zip");
-			ParseFile file = new ParseFile("ml-1m.zip", data);
+			ParseFile file = new ParseFile("ml-1m.zip", data,PARSE);
 			file.save(new ProgressCallback() {
 				
 				@Override
@@ -107,11 +107,11 @@ public class ParseFileTestCase extends Parse4JTestCase {
 		System.out.println("uploadDocAndGetData(): initializing...");
 		try {
 			byte[] data = getBytes("/parse.docx");
-			ParseFile file = new ParseFile("parse.docx", data);
+			ParseFile file = new ParseFile("parse.docx", data,PARSE);
 			file.save();
 			testParseFile(file);
 			
-			ParseFile getFile = new ParseFile(file.getName(), file.getUrl());
+			ParseFile getFile = new ParseFile(file.getName(), file.getUrl(),PARSE);
 			byte[] getData = getFile.getData();
 			System.out.println("uploadDocAndGetData(): data.length: " + data.length);
 			System.out.println("uploadDocAndGetData(): getData.length: " + getData.length);
